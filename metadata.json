@@ -1,0 +1,5 @@
+{
+  "name": "LearnSphere Adventures",
+  "description": "A friendly learning assistant web game for students, featuring lessons, quizzes, and a fun bonus zone, all powered by Gemini and integrated with an n8n backend for progress tracking.",
+  "requestFramePermissions": []
+}
