@@ -31,30 +31,40 @@ const App: React.FC = () => {
       //   ? await signInUser(username, password!)
       //   : await signUpUser(username, password!);
       // setUser(response.user);
-
-      if (mode === 'signIn' && username === 'test' && password === 'test') {
-        setError(t('auth.error.signIn'));
-        throw new Error('Invalid credentials');
+      
+      if (mode === 'signUp') {
+        const newUser: User = {
+            id: Date.now(),
+            username,
+            avatar: `https://api.multiavatar.com/${username}.svg`,
+            total_xp: 0,
+            level: 1,
+            rank: 'Beginner',
+            topics_completed: 0,
+            completed_topics_in_rank: [],
+            school: '',
+            description: `A new adventurer!`,
+        };
+        setUser(newUser);
+      } else { // 'signIn'
+        const mockSignInUser: User = {
+            id: 1,
+            username,
+            avatar: `https://api.multiavatar.com/${username}.svg`,
+            total_xp: 120,
+            level: 2,
+            rank: 'Beginner',
+            topics_completed: 4,
+            completed_topics_in_rank: ['Math', 'Science', 'History', 'Art'],
+            school: 'Hogwarts',
+            description: 'Future Auror!'
+        };
+        setUser(mockSignInUser);
       }
 
-      const mockUser: User = {
-        id: 1,
-        username,
-        avatar: `https://api.multiavatar.com/${username}.svg`,
-        total_xp: 120,
-        level: 2,
-        rank: 'Beginner',
-        topics_completed: 4,
-        completed_topics_in_rank: ['Math', 'Science', 'History', 'Art'],
-        school: 'Hogwarts',
-        description: 'Future Auror!'
-      };
-      setUser(mockUser);
       setView('dashboard');
     } catch (err) {
-      if (!error) {
-          setError(t('auth.error.generic'));
-      }
+      setError(t('auth.error.generic'));
       console.error(err);
     } finally {
       setIsLoading(false);
