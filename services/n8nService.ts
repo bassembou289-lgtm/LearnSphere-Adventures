@@ -2,11 +2,29 @@
 import { WEBHOOK_URLS } from '../constants';
 import { N8NAuthResponse, N8NUpdateXPResponse, N8NDashboardResponse, N8NBonusResponse, User, N8NUpdateSettingsResponse } from '../types';
 
+// This platform's environment provides environment variables via a polyfilled `process.env`.
+declare const process: {
+  env: {
+    VITE_BACKEND_URL?: string;
+  }
+};
+
+const backendUrl = process.env.VITE_BACKEND_URL;
+
+if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
+  console.warn("VITE_BACKEND_URL is not set or is using the placeholder value for n8n services. Please check your .env.local file.");
+}
+
 // NOTE: These functions will fail if you don't have a running n8n instance with these webhooks.
 // The app uses mock data in App.tsx for demonstration purposes.
 // To use with a real backend, replace mock logic with these service calls.
 
-const post = async <T,>(url: string, body: object): Promise<T> => {
+const post = async <T,>(endpoint: string, body: object): Promise<T> => {
+    if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
+        // Use a more specific error for auth-related calls
+        return Promise.reject(new Error("Authentication service is not configured. Please set VITE_BACKEND_URL."));
+    }
+    const url = `${backendUrl}${endpoint}`;
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -17,7 +35,8 @@ const post = async <T,>(url: string, body: object): Promise<T> => {
         });
 
         if (!response.ok) {
-            throw new Error(`Webhook call failed with status: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`Webhook call to ${endpoint} failed with status ${response.status}: ${errorText}`);
         }
         return await response.json() as T;
     } catch (error) {

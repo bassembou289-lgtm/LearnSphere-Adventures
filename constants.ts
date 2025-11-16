@@ -1,14 +1,14 @@
 // Fix: Imported the User type to correctly type the RANKS constant.
 import { User } from './types';
 
-// IMPORTANT: Replace these with your actual public n8n webhook URLs.
+// These are now relative paths that will be appended to VITE_BACKEND_URL
 export const WEBHOOK_URLS = {
-  SIGN_UP: 'https://n8n.app/webhook/signUp',
-  SIGN_IN: 'https://n8n.app/webhook/signIn',
-  UPDATE_SETTINGS: 'https://n8n.app/webhook/updateSettings',
-  UPDATE_XP: 'https://n8n.app/webhook/updateXP',
-  DASHBOARD: 'https://n8n.app/webhook/dashboard',
-  GET_BONUS: 'https://n8n.app/webhook/getBonus',
+  SIGN_UP: '/webhook/signUp',
+  SIGN_IN: '/webhook/signIn',
+  UPDATE_SETTINGS: '/webhook/updateSettings',
+  UPDATE_XP: '/webhook/updateXP',
+  DASHBOARD: '/webhook/dashboard',
+  GET_BONUS: '/webhook/getBonus',
 };
 
 export const TOPICS = [

@@ -14,21 +14,29 @@ Before running or building the project, you need to create an environment file.
 2.  Add the following line to it, replacing the placeholder with your actual backend URL:
 
     ```
-    VITE_BACKEND_URL=https://YOUR_N8N_ENDPOINT_URL_HERE
+    VITE_BACKEND_URL=https://YOUR_N8N_INSTANCE_URL_HERE
     ```
 
 ### 2. Backend Setup (n8n on Render)
 
-You need a backend service to proxy requests to the Gemini API.
+You need a backend service to proxy requests to the Gemini API and handle user data.
 
 1.  **Set up an n8n instance.** A platform like [Render](https://render.com/) is a good choice for hosting it.
-2.  **Create workflows** in n8n that correspond to the API calls made by the frontend:
-    *   `POST /assisted-lesson`
-    *   `POST /self-lesson`
-    *   `POST /chat`
-    *   `POST /bonus-trivia`
-    *   `POST /test-connection`
-3.  Each workflow should receive the request, securely call the appropriate Gemini API with your stored API key, and return the response in the format the frontend expects.
+2.  **Create workflows** in n8n that correspond to all the API calls made by the frontend. Each workflow uses a "Webhook" node as a trigger.
+    *   **Gemini Proxy Workflows:**
+        *   `POST /webhook/assisted-lesson`
+        *   `POST /webhook/self-lesson`
+        *   `POST /webhook/chat`
+        *   `POST /webhook/bonus-trivia`
+        *   `POST /webhook/test-connection`
+    *   **User Data & Auth Workflows:**
+        *   `POST /webhook/signUp`
+        *   `POST /webhook/signIn`
+        *   `POST /webhook/updateSettings`
+        *   `POST /webhook/updateXP`
+        *   `POST /webhook/dashboard`
+        *   `POST /webhook/getBonus`
+3.  Each workflow should receive the request, perform its logic (e.g., securely call the Gemini API, interact with a database), and return the response in the format the frontend expects.
 4.  Once your n8n instance is live, copy its public URL and use it for `VITE_BACKEND_URL` in your `.env.local` file.
 
 ### 3. Frontend Deployment (Vercel)
@@ -37,7 +45,7 @@ You need a backend service to proxy requests to the Gemini API.
 2.  Sign up for a [Vercel](https://vercel.com/) account and connect your Git repository.
 3.  When configuring the project on Vercel, add an Environment Variable:
     *   **Name:** `VITE_BACKEND_URL`
-    *   **Value:** Your live n8n workflow URL.
+    *   **Value:** Your live n8n instance URL.
 4.  Deploy! Vercel will automatically build and deploy your React application.
 
 ### Running Locally
