@@ -1,4 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import enTranslations from './translations/en.json';
+import arTranslations from './translations/ar.json';
 
 type Language = 'en' | 'ar';
 type Translations = Record<string, string>;
@@ -10,36 +12,15 @@ interface LanguageContextType {
   dir: 'ltr' | 'rtl';
 }
 
-const initialTranslations: Record<Language, Translations> = {
-    en: {},
-    ar: {}
+const translationsData: Record<Language, Translations> = {
+    en: enTranslations,
+    ar: arTranslations
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('en');
-  const [translations, setTranslations] = useState<Record<Language, Translations>>(initialTranslations);
-
-  useEffect(() => {
-    const fetchTranslations = async () => {
-      try {
-        // Paths are relative to the root index.html file
-        const enRes = await fetch('./i18n/translations/en.json');
-        if (!enRes.ok) throw new Error(`HTTP error! status: ${enRes.status}`);
-        const enData = await enRes.json();
-
-        const arRes = await fetch('./i18n/translations/ar.json');
-        if (!arRes.ok) throw new Error(`HTTP error! status: ${arRes.status}`);
-        const arData = await arRes.json();
-
-        setTranslations({ en: enData, ar: arData });
-      } catch (error) {
-        console.error("Failed to load translations:", error);
-      }
-    };
-    fetchTranslations();
-  }, []);
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -47,14 +28,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [language]);
 
   const t = useCallback((key: string, replacements?: Record<string, string | number>): string => {
-    let translation = translations[language][key] || key;
+    let translation = translationsData[language][key] || key;
     if (replacements) {
         Object.keys(replacements).forEach(placeholder => {
             translation = translation.replace(`{{${placeholder}}}`, String(replacements[placeholder]));
         });
     }
     return translation;
-  }, [language, translations]);
+  }, [language]);
 
   const dir = language === 'ar' ? 'rtl' : 'ltr';
 
