@@ -1,40 +1,59 @@
 # LearnSphere Adventures 🚀
 
-This is a friendly learning assistant web game for students, featuring lessons, quizzes, and a fun bonus zone.
+A friendly learning assistant web game for students, featuring lessons, quizzes, and a fun bonus zone.
 
-## Project Setup & Deployment
+## Project Overview
 
-This project has been refactored for a secure deployment model where the frontend (this React app) communicates with a backend service (e.g., an n8n workflow) which then calls the AI model's API. This prevents your API key from being exposed in the browser.
+This project uses a secure deployment model where the frontend (this React app) communicates with a backend service (e.g., n8n). The backend is responsible for calling the AI model's API, which prevents your secret API keys from being exposed in the browser.
 
-### 1. Environment Variables
+---
 
-Before running or building the project, you need to create an environment file.
+## 1. Local Development Setup
+
+Follow these steps to run the application on your local computer.
+
+### Step 1: Install Dependencies
+Open your terminal in the project root and run:
+```bash
+npm install
+```
+
+### Step 2: Create Local Environment File (`.env.local`)
+
+This file is **only for local development** and tells your app where to find the backend. **Do not commit this file to GitHub.**
 
 1.  In the root of the project, create a new file named `.env.local`.
-2.  Add the following line to it, replacing the placeholder with your actual backend URL:
+2.  Add the following line, replacing the placeholder with your n8n URL (which you'll set up in the next section). If you don't have it yet, you can use a placeholder.
 
     ```
     VITE_BACKEND_URL=https://YOUR_N8N_INSTANCE_URL_HERE
     ```
 
-### 2. Backend Setup: Using a Free Backend with OpenRouter (Recommended for Students)
+### Step 3: Run the Development Server
+```bash
+npm run dev
+```
+The application will be available at `http://localhost:5173`.
 
-To keep this project completely free, you can use [OpenRouter](https://openrouter.ai/) to access free AI models. This is the recommended path.
+---
+
+## 2. Backend Setup: n8n with OpenRouter (Free)
+
+To keep this project completely free, you can use [OpenRouter](https://openrouter.ai/) to access free AI models.
 
 1.  **Get an OpenRouter API Key:**
     *   Sign up for a free account at [OpenRouter.ai](https://openrouter.ai/).
-    *   Go to your **Keys** page and create a new key. Copy it.
+    *   Go to your **Keys** page, create a new key, and copy it.
 
 2.  **Deploy an n8n Instance on Render:**
     *   Follow a guide to deploy n8n on a free service like [Render](https://render.com/).
-    *   In your n8n service's Environment Variables, create a secret:
+    *   In your n8n service's **Environment Variables** on Render, create a secret:
         *   **Key:** `OPENROUTER_API_KEY`
         *   **Value:** Paste your OpenRouter API key.
 
-3.  **Create n8n Workflows (Step-by-Step for `assisted-lesson`):**
-    *   For each backend endpoint (e.g., `/assisted-lesson`), create a new workflow in n8n.
-    *   **A. Trigger Node:** Use the **Webhook** node. Set the **HTTP Method** to `POST` and the **Path** to `assisted-lesson` (or the corresponding path).
-    *   **B. Logic Node:** Add an **HTTP Request** node. Configure it as follows:
+3.  **Create n8n Workflows (Example for `assisted-lesson`):**
+    *   **A. Trigger Node:** Use the **Webhook** node. Set **HTTP Method** to `POST` and **Path** to `assisted-lesson`.
+    *   **B. Logic Node:** Add an **HTTP Request** node.
         *   **Method:** `POST`
         *   **URL:** `https://openrouter.ai/api/v1/chat/completions`
         *   **Authentication:** `Header Auth`
@@ -42,8 +61,7 @@ To keep this project completely free, you can use [OpenRouter](https://openroute
             *   **Name:** `Authorization`
             *   **Value (use expression):** `Bearer {{ $env.OPENROUTER_API_KEY }}`
         *   **Body Content Type:** `JSON`
-        *   **Body (use expression):** Paste the code below. This example uses the free `google/gemini-flash-1.5` model and asks for a JSON response, which is critical for the app to work.
-
+        *   **Body (use expression):**
         ```json
         {
           "model": "google/gemini-flash-1.5",
@@ -60,17 +78,28 @@ To keep this project completely free, you can use [OpenRouter](https://openroute
           ]
         }
         ```
-
-    *   **C. Parser Node:** The app expects a clean JSON object, but the response from OpenRouter comes inside other properties. Add a **Code** node after the HTTP Request node with this code to extract and parse the JSON:
+    *   **C. Parser Node:** Add a **Code** node after the HTTP Request node to extract the clean JSON.
         ```javascript
-        // This ensures a clean JSON object is sent back to the app
         const responseString = $('HTTP Request').item.json.choices[0].message.content;
         return JSON.parse(responseString);
         ```
-    *   **D. Response Node:** Ensure the Code node is connected to the final **Respond to Webhook** node. The response will automatically be the output from the Code node.
-    *   Activate and save the workflow. Repeat this process for all the required webhook paths listed below, adjusting the `"content"` in the user message for each specific task.
+    *   **D. Response Node:** Connect the Code node to the final **Respond to Webhook** node.
+    *   Activate and save the workflow. Repeat for all required webhook paths, adjusting the user message for each task.
 
-### 3. Required Backend Webhook Paths
+---
+
+## 3. Frontend Deployment (Vercel)
+
+1.  Push your code to a Git repository (GitHub, GitLab, etc.).
+2.  Sign up for [Vercel](https://vercel.com/) and connect your Git repository.
+3.  When configuring the project, go to the **Environment Variables** section and add:
+    *   **Name:** `VITE_BACKEND_URL`
+    *   **Value:** Your live n8n instance URL from Render.
+4.  Deploy!
+
+---
+
+## 4. Required Backend Webhook Paths
 
 Your backend service must have workflows that respond to these `POST` requests:
 *   `/webhook/assisted-lesson`
@@ -85,33 +114,12 @@ Your backend service must have workflows that respond to these `POST` requests:
 *   `/webhook/dashboard`
 *   `/webhook/getBonus`
 
-### 4. Frontend Deployment (Vercel)
+---
 
-1.  Push your code to a Git repository (e.g., GitHub, GitLab).
-2.  Sign up for a [Vercel](https://vercel.com/) account and connect your Git repository.
-3.  When configuring the project on Vercel, add an Environment Variable:
-    *   **Name:** `VITE_BACKEND_URL`
-    *   **Value:** Your live n8n instance URL.
-4.  Deploy! Vercel will automatically build and deploy your React application.
+## Building for Production
 
-### Running Locally
-
-1.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-2.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
-    The application will be available at `http://localhost:5173` (or another port if 5173 is busy).
-
-### Building for Production
-
-To create a production-ready build of the app:
-
+To create a production-ready build of the app, run:
 ```bash
 npm run build
 ```
-
-This will create a `dist` directory with the optimized, static assets for your application.
+This creates a `dist` directory with optimized, static assets. Vercel runs this command for you automatically when you deploy.
