@@ -1,10 +1,12 @@
 
+
 import { WEBHOOK_URLS } from '../constants';
 import { N8NAuthResponse, N8NUpdateXPResponse, N8NDashboardResponse, N8NBonusResponse, User, N8NUpdateSettingsResponse } from '../types';
 
 // This platform's environment provides environment variables via a polyfilled `process.env`.
 declare const process: {
   env: {
+    NODE_ENV?: string;
     VITE_BACKEND_URL?: string;
   }
 };
@@ -12,7 +14,7 @@ declare const process: {
 const backendUrl = process.env.VITE_BACKEND_URL;
 
 if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
-  console.warn("VITE_BACKEND_URL is not set or is using the placeholder value for n8n services. Please check your .env.local file.");
+  console.warn("VITE_BACKEND_URL is not set or is using the placeholder value for n8n services. Please check your .env.local file or deployment environment variables.");
 }
 
 // NOTE: These functions will fail if you don't have a running n8n instance with these webhooks.
@@ -21,8 +23,11 @@ if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
 
 const post = async <T,>(endpoint: string, body: object): Promise<T> => {
     if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
-        // Use a more specific error for auth-related calls
-        return Promise.reject(new Error("Authentication service is not configured. Please set VITE_BACKEND_URL."));
+        const isProduction = process.env.NODE_ENV === 'production';
+        const errorMessage = isProduction
+            ? "Authentication service is not configured. Please set the VITE_BACKEND_URL environment variable in your deployment settings."
+            : "Authentication service is not configured. Please set VITE_BACKEND_URL in your .env.local file.";
+        return Promise.reject(new Error(errorMessage));
     }
     const url = `${backendUrl}${endpoint}`;
     try {

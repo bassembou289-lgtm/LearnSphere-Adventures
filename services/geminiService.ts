@@ -2,6 +2,7 @@
 // We declare it here to satisfy TypeScript's type checker.
 declare const process: {
   env: {
+    NODE_ENV?: string;
     VITE_BACKEND_URL?: string;
   }
 };
@@ -11,14 +12,18 @@ import { AssistedLearningData, BonusData, ChatMessage, User } from '../types';
 const backendUrl = process.env.VITE_BACKEND_URL;
 
 if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
-  console.warn("VITE_BACKEND_URL is not set or is using the placeholder value. Please check your .env.local file.");
+  console.warn("VITE_BACKEND_URL is not set or is using the placeholder value. Please check your .env.local file or deployment environment variables.");
 }
 
 // Generic POST helper for backend calls
 const postToBackend = async <T,>(endpoint: string, body: object): Promise<T> => {
     // Return a mocked error if the URL is not configured
     if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
-        return Promise.reject(new Error("Backend URL is not configured. Please set VITE_BACKEND_URL in your .env.local file."));
+        const isProduction = process.env.NODE_ENV === 'production';
+        const errorMessage = isProduction
+            ? "Backend URL is not configured. Please set the VITE_BACKEND_URL environment variable in your deployment settings (e.g., on Vercel)."
+            : "Backend URL is not configured. Please set VITE_BACKEND_URL in your .env.local file.";
+        return Promise.reject(new Error(errorMessage));
     }
 
     const url = `${backendUrl}${endpoint}`;

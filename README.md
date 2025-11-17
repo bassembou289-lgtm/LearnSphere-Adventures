@@ -102,17 +102,35 @@ To keep this project completely free, you can use [OpenRouter](https://openroute
 ## 4. Required Backend Webhook Paths
 
 Your backend service must have workflows that respond to these `POST` requests:
-*   `/webhook/assisted-lesson`
-*   `/webhook/self-lesson`
-*   `/webhook/chat`
-*   `/webhook/bonus-trivia`
-*   `/webhook/test-connection` (Can just return `{ "message": "pong" }`)
+*   `/assisted-lesson`
+*   `/self-lesson`
+*   `/chat`
+*   `/bonus-trivia`
+*   `/test-connection` (Can just return `{ "message": "pong" }`)
 *   `/webhook/signUp`
 *   `/webhook/signIn`
 *   `/webhook/updateSettings`
 *   `/webhook/updateXP`
 *   `/webhook/dashboard`
 *   `/webhook/getBonus`
+
+---
+
+## 5. Troubleshooting
+
+### "Failed to connect: Backend URL is not configured..." error on Vercel
+
+If you see an error message about `VITE_BACKEND_URL` not being set after deploying to Vercel, it's because the application cannot find the URL for your backend.
+
+**Solution:**
+
+1.  Go to your project's dashboard on Vercel.
+2.  Navigate to the **Settings** tab, then click on **Environment Variables**.
+3.  Ensure you have an environment variable with the **exact** name `VITE_BACKEND_URL`.
+4.  The value should be the full URL of your live n8n backend (e.g., `https://your-n8n-app.onrender.com`).
+5.  After adding or updating the variable, you **must redeploy** your application for the change to take effect. Go to the **Deployments** tab, click the three dots (`...`) on the latest deployment, and select "Redeploy".
+
+The `.env.local` file is only used for local development and is not uploaded to Vercel, which is why you must set the variable in their dashboard.
 
 ---
 
