@@ -1,15 +1,9 @@
-// This platform's environment provides environment variables via a polyfilled `process.env`.
-// We declare it here to satisfy TypeScript's type checker.
-declare const process: {
-  env: {
-    NODE_ENV?: string;
-    VITE_BACKEND_URL?: string;
-  }
-};
+// Fix: Add Vite client types to resolve import.meta.env errors.
+/// <reference types="vite/client" />
 
 import { AssistedLearningData, BonusData, ChatMessage, User } from '../types';
 
-const backendUrl = process.env.VITE_BACKEND_URL;
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
   console.warn("VITE_BACKEND_URL is not set or is using the placeholder value. Please check your .env.local file or deployment environment variables.");
@@ -19,7 +13,7 @@ if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
 const postToBackend = async <T,>(endpoint: string, body: object): Promise<T> => {
     // Return a mocked error if the URL is not configured
     if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
-        const isProduction = process.env.NODE_ENV === 'production';
+        const isProduction = import.meta.env.PROD; // Use Vite's standard flag for production
         const errorMessage = isProduction
             ? "Backend URL is not configured. Please set the VITE_BACKEND_URL environment variable in your deployment settings (e.g., on Vercel)."
             : "Backend URL is not configured. Please set VITE_BACKEND_URL in your .env.local file.";

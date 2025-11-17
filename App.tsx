@@ -46,6 +46,8 @@ const App: React.FC = () => {
           school: '',
           description: `A new adventurer!`,
       };
+      // DEBUG: Log the fresh user object to the browser console to confirm it's created correctly.
+      console.log('Creating new user:', freshUser);
       setUser(freshUser);
 
       setView('dashboard');
