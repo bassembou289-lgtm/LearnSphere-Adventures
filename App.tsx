@@ -32,35 +32,21 @@ const App: React.FC = () => {
       //   : await signUpUser(username, password!);
       // setUser(response.user);
       
-      if (mode === 'signUp') {
-        const newUser: User = {
-            id: Date.now(),
-            username,
-            avatar: `https://api.multiavatar.com/${username}.svg`,
-            total_xp: 0,
-            level: 1,
-            rank: 'Beginner',
-            topics_completed: 0,
-            completed_topics_in_rank: [],
-            school: '',
-            description: `A new adventurer!`,
-        };
-        setUser(newUser);
-      } else { // 'signIn'
-        const mockSignInUser: User = {
-            id: 1,
-            username,
-            avatar: `https://api.multiavatar.com/${username}.svg`,
-            total_xp: 120,
-            level: 2,
-            rank: 'Beginner',
-            topics_completed: 4,
-            completed_topics_in_rank: ['Math', 'Science', 'History', 'Art'],
-            school: 'Hogwarts',
-            description: 'Future Auror!'
-        };
-        setUser(mockSignInUser);
-      }
+      // For this mock version, both sign-in and sign-up will create a fresh user.
+      // This ensures a new player always starts at zero, addressing the user's issue.
+      const freshUser: User = {
+          id: Date.now(),
+          username,
+          avatar: `https://api.multiavatar.com/${username}.svg`,
+          total_xp: 0,
+          level: 1,
+          rank: 'Beginner',
+          topics_completed: 0,
+          completed_topics_in_rank: [],
+          school: '',
+          description: `A new adventurer!`,
+      };
+      setUser(freshUser);
 
       setView('dashboard');
     } catch (err) {
