@@ -70,7 +70,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onAuth, error }) => {
             placeholder={t('auth.passwordPlaceholder')}
             className="w-full px-5 py-3 text-lg text-center text-gray-700 bg-white/90 rounded-full border-2 border-transparent focus:outline-none focus:ring-4 focus:ring-yellow-300"
           />
-          {error && <p className="text-red-200 font-semibold">{error}</p>}
+          {error && (
+            <div className="bg-red-500 text-white px-4 py-3 rounded-xl shadow-lg border-2 border-red-400 animate-pulse-once">
+                <p className="font-bold text-sm sm:text-base">{error}</p>
+            </div>
+          )}
           <button
             type="submit"
             disabled={!username.trim() || !password.trim()}

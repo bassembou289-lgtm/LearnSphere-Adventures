@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { generateBonusTrivia } from '../services/geminiService';
-// import { sendBonusResults } from '../services/n8nService';
+import { sendBonusResults } from '../services/userService';
 import { BonusData, User, N8NBonusResponse } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 import Quiz from './Quiz';
@@ -40,15 +40,7 @@ const BonusZone: React.FC<BonusZoneProps> = ({ user, onComplete, onBack }) => {
   const handleQuizSubmit = async (score: number) => {
     setIsLoading(true);
     try {
-        // MOCK RESPONSE - In a real app, you would uncomment the n8nService call
-        // const response = await sendBonusResults(user.username, score);
-        let response: N8NBonusResponse;
-        if (score === 100) {
-            response = { message: "Awesome! You aced the bonus round! 🤩", new_xp: user.total_xp + 40 };
-        } else {
-            response = { message: "Fun stuff! Keep learning to earn more XP!", new_xp: user.total_xp };
-        }
-        await new Promise(res => setTimeout(res, 1000)); // Simulate network delay
+        const response = await sendBonusResults(user.username, score);
         setQuizResult(response);
     } catch (err) {
         setError('Could not submit your bonus score. Please check your connection.');
@@ -66,7 +58,16 @@ const BonusZone: React.FC<BonusZoneProps> = ({ user, onComplete, onBack }) => {
   return (
     <div className="min-h-screen p-4 sm:p-6 md:p-8">
       <div className="max-w-3xl mx-auto">
-        <button onClick={onBack} className="mb-6 bg-white px-4 py-2 rounded-lg shadow font-semibold text-gray-700 hover:bg-gray-100 transition" dangerouslySetInnerHTML={{ __html: t('common.backToDashboard') }}/>
+        <button 
+          onClick={onBack} 
+          className="mb-6 bg-white px-4 py-2 rounded-lg shadow font-semibold text-gray-700 hover:bg-gray-100 transition flex items-center gap-2 group"
+        >
+           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 rtl:rotate-180 transform group-hover:-translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+          </svg>
+          {t('common.backToDashboard')}
+        </button>
+
         <h1 className="text-4xl font-black text-gray-800 mb-2">{t('bonus.title')}</h1>
         <h2 className="text-2xl font-bold text-orange-600 mb-6">{t('bonus.subtitle')}</h2>
 

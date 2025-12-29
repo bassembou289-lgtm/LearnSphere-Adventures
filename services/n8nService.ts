@@ -1,10 +1,8 @@
-// Fix: Add Vite client types to resolve import.meta.env errors.
-/// <reference types="vite/client" />
-
 import { WEBHOOK_URLS } from '../constants';
 import { N8NAuthResponse, N8NUpdateXPResponse, N8NDashboardResponse, N8NBonusResponse, User, N8NUpdateSettingsResponse } from '../types';
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+// Fix: Cast import.meta to any to avoid "Property 'env' does not exist on type 'ImportMeta'" when vite types are missing.
+const backendUrl = (import.meta as any).env.VITE_BACKEND_URL;
 
 if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
   console.warn("VITE_BACKEND_URL is not set or is using the placeholder value for n8n services. Please check your .env.local file or deployment environment variables.");
@@ -16,7 +14,7 @@ if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
 
 const post = async <T,>(endpoint: string, body: object): Promise<T> => {
     if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
-        const isProduction = import.meta.env.PROD; // Use Vite's standard flag for production
+        const isProduction = (import.meta as any).env.PROD; // Use Vite's standard flag for production via cast
         const errorMessage = isProduction
             ? "Authentication service is not configured. Please set the VITE_BACKEND_URL environment variable in your deployment settings."
             : "Authentication service is not configured. Please set VITE_BACKEND_URL in your .env.local file.";

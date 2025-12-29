@@ -67,3 +67,14 @@ export interface LeaderboardEntry {
     total_xp: number;
     school?: string;
 }
+
+export interface TeamMember {
+    name: string;
+    role: string;
+    photo: string;
+}
+
+export interface AboutResponse {
+    school_description: string;
+    team: TeamMember[];
+}

@@ -1,14 +1,35 @@
 // Fix: Imported the User type to correctly type the RANKS constant.
 import { User } from './types';
 
-// These are now relative paths that will be appended to VITE_BACKEND_URL
+// REST API Endpoints for Python Backend
+export const API_ENDPOINTS = {
+  // Auth & User
+  SIGN_UP: '/api/auth/signup',
+  SIGN_IN: '/api/auth/signin',
+  UPDATE_SETTINGS: '/api/user/settings',
+  UPDATE_XP: '/api/user/xp',
+  DASHBOARD: '/api/user/dashboard',
+  BONUS_RESULT: '/api/bonus',
+  
+  // Content Generation (AI)
+  ASSISTED_LESSON: '/api/lesson/assisted',
+  SELF_LESSON: '/api/lesson/self',
+  CHAT: '/api/chat',
+  TRIVIA: '/api/trivia',
+  
+  // System
+  TEST_CONNECTION: '/api/test',
+  ABOUT: '/api/about',
+};
+
+// Fix: Added WEBHOOK_URLS to resolve import errors in n8nService.ts
 export const WEBHOOK_URLS = {
-  SIGN_UP: '/webhook/signUp',
-  SIGN_IN: '/webhook/signIn',
-  UPDATE_SETTINGS: '/webhook/updateSettings',
-  UPDATE_XP: '/webhook/updateXP',
+  SIGN_UP: '/webhook/signup',
+  SIGN_IN: '/webhook/signin',
+  UPDATE_SETTINGS: '/webhook/settings',
+  UPDATE_XP: '/webhook/xp',
   DASHBOARD: '/webhook/dashboard',
-  GET_BONUS: '/webhook/getBonus',
+  GET_BONUS: '/webhook/bonus',
 };
 
 export const TOPICS = [

@@ -1,3 +1,4 @@
+
 {
   "login.title": "LearnSphere",
   "login.subtitle": "Adventures 🎉",
@@ -14,6 +15,7 @@
   "auth.signUpNow": "Sign Up Now",
   "auth.signInNow": "Sign In",
   "auth.error.signIn": "Oops! Wrong username or password.",
+  "auth.error.userNotFound": "Account does not exist. Please create a new account!",
   "auth.error.generic": "Something went wrong. Please try again.",
   "dashboard.welcome": "Welcome back, {{username}}! 👋",
   "dashboard.prompt": "Ready for a new adventure in learning?",
@@ -27,8 +29,10 @@
   "dashboard.assisted": "Assisted",
   "dashboard.assisted.description": "Enter the learning adventure, get challenges and points.",
   "dashboard.selfPaced": "Self-Paced",
-  "dashboard.selfPacedStudy": "🚀 Self-Paced Study",
-  "dashboard.selfPacedStudy.description": "Study by yourself using the AI.",
+  "dashboard.selfPacedStudy": "Self-Paced Study",
+  "dashboard.selfPacedStudy.description": "Study any topic freely with your AI tutor.",
+  "dashboard.selfPacedStudy.detail": "Ask questions, explore deep concepts, and learn at your own speed without quizzes or time limits!",
+  "dashboard.startJourney": "Start Exploring",
   "dashboard.selfPacedModalTitle": "Choose a Topic to Explore",
   "dashboard.bonusZone": "🎁 Bonus Zone 🎁",
   "dashboard.bonusZone.locked": "Complete 2 topics to unlock the Bonus Zone!",
@@ -45,7 +49,7 @@
   "bonus.title": "🎁 Bonus Zone 🎁",
   "bonus.subtitle": "Time for some fun trivia!",
   "quiz.submit": "Check My Answers! ✅",
-  "common.backToDashboard": "&larr; Back to Dashboard",
+  "common.backToDashboard": "Back to Dashboard",
   "common.loading": "Loading...",
   "common.error": "Oh no! Something went wrong. Please try again. 😥",
   "assisted.error": "Oh no! I had trouble creating the lesson. Please try again. 😥",
@@ -62,7 +66,10 @@
   "settings.title": "Settings",
   "settings.editProfile": "Edit Profile",
   "settings.avatar": "Avatar",
-  "settings.randomizeAvatar": "Randomize Avatar",
+  "settings.randomizeAvatar": "Randomize",
+  "settings.choosePreset": "Or choose a look:",
+  "settings.avatarUrlPlaceholder": "Or paste image link...",
+  "settings.avatarUrlHint": "Paste a URL to any image on the web",
   "settings.username": "Username",
   "settings.school": "School (Optional)",
   "settings.description": "About Me (Optional)",
@@ -92,5 +99,9 @@
   "topic.computer": "Computers",
   "topic.arabic": "Arabic",
   "topic.biology": "Biology",
-  "topic.problem_solving": "Problem Solving"
+  "topic.problem_solving": "Problem Solving",
+  "about.title": "About LearnSphere",
+  "about.school": "Our School",
+  "about.team": "Meet the Team",
+  "about.mockDescription": "Welcome to Future Generation School! We are dedicated to providing the best interactive learning experience for students through technology and innovation. Our mission is to make learning fun, accessible, and magical for everyone."
 }

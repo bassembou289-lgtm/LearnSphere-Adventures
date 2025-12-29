@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -54,13 +55,31 @@
       .animate-incorrect-reveal {
           animation: incorrect-answer-reveal 0.4s ease-in-out 0.2s forwards;
       }
+
+      /* Plane Travel Animation for Dashboard Banner - Linear at bottom */
+      @keyframes plane-travel {
+        0% {
+          left: -10%;
+          top: 80%; /* Aligned with the dots at cy=80 */
+          transform: translateY(-50%) rotate(90deg);
+        }
+        100% {
+          left: 110%;
+          top: 80%;
+          transform: translateY(-50%) rotate(90deg);
+        }
+      }
+      .animate-plane-travel {
+        animation: plane-travel 8s linear infinite;
+      }
     </style>
   <script type="importmap">
 {
   "imports": {
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0"
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0"
   }
 }
 </script>

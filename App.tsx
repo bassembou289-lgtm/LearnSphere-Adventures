@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import LoginScreen from './components/LoginScreen';
 import Dashboard from './components/Dashboard';
@@ -9,7 +10,7 @@ import SettingsModal from './components/SettingsModal';
 import { User, View, N8NUpdateXPResponse, N8NBonusResponse } from './types';
 import { useTranslation } from './i18n/LanguageContext';
 import { TOPICS, RANKS } from './constants';
-// import { signInUser, signUpUser } from './services/n8nService';
+import { signInUser, signUpUser, updateUserSettings } from './services/userService';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -24,36 +25,42 @@ const App: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      // MOCK RESPONSE - In a real app, you would use the n8nService calls
-      await new Promise(res => setTimeout(res, 1500)); // Simulate network delay
+      const response = mode === 'signIn' 
+        ? await signInUser(username, password)
+        : await signUpUser(username, password);
       
-      // const response = mode === 'signIn' 
-      //   ? await signInUser(username, password!)
-      //   : await signUpUser(username, password!);
-      // setUser(response.user);
-      
-      // For this mock version, both sign-in and sign-up will create a fresh user.
-      // This ensures a new player always starts at zero, addressing the user's issue.
-      const freshUser: User = {
-          id: Date.now(),
-          username,
-          avatar: `https://api.multiavatar.com/${username}.svg`,
-          total_xp: 0,
-          level: 1,
-          rank: 'Beginner',
-          topics_completed: 0,
-          completed_topics_in_rank: [],
-          school: '',
-          description: `A new adventurer!`,
-      };
-      // DEBUG: Log the fresh user object to the browser console to confirm it's created correctly.
-      console.log('Creating new user:', freshUser);
-      setUser(freshUser);
+      // Robust check: If response is technically successful (200 OK) but contains no user data,
+      // treat it as a "User not found" or logic error from backend.
+      if (!response.user) {
+         throw new Error('User not found');
+      }
 
+      setUser(response.user);
       setView('dashboard');
     } catch (err) {
-      setError(t('auth.error.generic'));
       console.error(err);
+      let errorMessage = t('auth.error.generic');
+      
+      if (err instanceof Error) {
+        const errorText = err.message.toLowerCase();
+        
+        // Handle specific error cases for better UX
+        if (mode === 'signIn') {
+            // Check for 404 or "not found" indicating the account doesn't exist
+            if (errorText.includes('not found') || errorText.includes('404') || errorText.includes('does not exist')) {
+                errorMessage = t('auth.error.userNotFound');
+            } else if (errorText.includes('password') || errorText.includes('credential') || errorText.includes('401')) {
+                errorMessage = t('auth.error.signIn');
+            } else {
+                // For other errors, use the server message if available, otherwise generic
+                errorMessage = err.message || errorMessage;
+            }
+        } else {
+            // For sign up, just show the error (e.g., username taken)
+            errorMessage = err.message || errorMessage;
+        }
+      }
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -85,15 +92,13 @@ const App: React.FC = () => {
     let newLevel = xpResponse.new_level;
     let newCompletedTopicsInRank = updatedCompletedTopics;
     
-    // Check for Rank Up
+    // Check for Rank Up logic (frontend optimistically updates, but backend is source of truth)
+    // We trust the backend response `xpResponse.rank`
     if (updatedCompletedTopics.length === TOPICS.length) {
-        const currentRankIndex = RANKS.indexOf(user.rank);
-        if (currentRankIndex < RANKS.length - 1) {
-            newRank = RANKS[currentRankIndex + 1];
-            newLevel = 1; // Reset level for new rank
+         const currentRankIndex = RANKS.indexOf(user.rank);
+         if (currentRankIndex < RANKS.length - 1 && user.rank !== newRank) {
             newCompletedTopicsInRank = []; // Reset progress for new rank
-            // Could add a rank-up modal/notification here
-        }
+         }
     }
 
     setUser({
@@ -119,9 +124,13 @@ const App: React.FC = () => {
     setView('dashboard');
   };
 
-  const handleUpdateSettings = (updatedUser: User) => {
-      setUser(updatedUser);
-      // Here you would also call n8nService.updateUserSettings
+  const handleUpdateSettings = async (updatedUser: User) => {
+      try {
+        const response = await updateUserSettings(updatedUser.username, updatedUser);
+        setUser(response.user);
+      } catch (e) {
+        console.error("Failed to update settings", e);
+      }
   };
 
   const renderContent = () => {

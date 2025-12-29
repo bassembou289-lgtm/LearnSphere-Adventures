@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { generateAssistedLesson } from '../services/geminiService';
-// import { updateUserXP } from '../services/n8nService';
+import { updateUserXP } from '../services/userService';
 import { AssistedLearningData, User, N8NUpdateXPResponse } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 import Quiz from './Quiz';
 import Modal from './Modal';
 import { useTranslation } from '../i18n/LanguageContext';
-import { TOPICS, MAX_LEVEL_IN_RANK } from '../constants';
+import { TOPICS } from '../constants';
 
 interface AssistedLearningProps {
   topic: string;
@@ -45,26 +45,11 @@ const AssistedLearning: React.FC<AssistedLearningProps> = ({ topic, user, onComp
   const handleQuizSubmit = async (score: number, correctAnswers: number, totalQuestions: number) => {
     setIsLoading(true);
     try {
-        // MOCK RESPONSE - In a real app, you would uncomment the n8nService call
-        // const response = await updateUserXP(user.username, topic, score, user.level);
-        
-        const xpGained = 25 + Math.round(score / 4); // Gain between 25-50 XP
-        const newTotalXp = user.total_xp + xpGained;
-        
-        let newLevel = user.level;
-        if (user.level < MAX_LEVEL_IN_RANK && score >= 80) { // Level up on good performance if not max level
-            newLevel = user.level + 1;
-        }
-
-        const response: N8NUpdateXPResponse = {
-            message: `Great effort! You got ${correctAnswers}/${totalQuestions} correct and earned ${xpGained} XP!`,
-            new_xp: newTotalXp,
-            new_level: newLevel,
-            rank: user.rank,
-        };
-
-        await new Promise(res => setTimeout(res, 1000)); // Simulate network delay
-        setQuizResult(response);
+        const response = await updateUserXP(user.username, topic, score, user.level);
+        setQuizResult({
+            ...response,
+            message: `Great effort! You got ${correctAnswers}/${totalQuestions} correct!` 
+        });
     } catch (err) {
         setError('Could not update your score. Please check your connection.');
     } finally {
@@ -81,7 +66,16 @@ const AssistedLearning: React.FC<AssistedLearningProps> = ({ topic, user, onComp
   return (
     <div className="min-h-screen p-4 sm:p-6 md:p-8">
       <div className="max-w-3xl mx-auto">
-        <button onClick={onBack} className="mb-6 bg-white px-4 py-2 rounded-lg shadow font-semibold text-gray-700 hover:bg-gray-100 transition" dangerouslySetInnerHTML={{ __html: t('common.backToDashboard') }}/>
+        <button 
+          onClick={onBack} 
+          className="mb-6 bg-white px-4 py-2 rounded-lg shadow font-semibold text-gray-700 hover:bg-gray-100 transition flex items-center gap-2 group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 rtl:rotate-180 transform group-hover:-translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+          </svg>
+          {t('common.backToDashboard')}
+        </button>
+
         <h1 className="text-4xl font-black text-gray-800 mb-2">{t('assisted.title')}</h1>
         <h2 className="text-2xl font-bold text-blue-600 mb-6">{displayTopic}</h2>
 
