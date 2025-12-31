@@ -1,25 +1,28 @@
 // Fix: Imported the User type to correctly type the RANKS constant.
 import { User } from './types';
 
+// Use environment variable for the API base URL with a fallback
+const API_BASE_URL = (import.meta as any).env.VITE_API_BASE_URL || "https://learnsphere-backend-d6gb.onrender.com";
+
 // REST API Endpoints for Python Backend
 export const API_ENDPOINTS = {
   // Auth & User
-  SIGN_UP: '/api/auth/signup',
-  SIGN_IN: '/api/auth/signin',
-  UPDATE_SETTINGS: '/api/user/settings',
-  UPDATE_XP: '/api/user/xp',
-  DASHBOARD: '/api/user/dashboard',
-  BONUS_RESULT: '/api/bonus',
+  SIGN_UP: `${API_BASE_URL}/api/auth/signup`,
+  SIGN_IN: `${API_BASE_URL}/api/auth/signin`,
+  UPDATE_SETTINGS: `${API_BASE_URL}/api/user/settings`,
+  UPDATE_XP: `${API_BASE_URL}/api/user/xp`,
+  DASHBOARD: `${API_BASE_URL}/api/user/dashboard`,
+  BONUS_RESULT: `${API_BASE_URL}/api/bonus`,
   
   // Content Generation (AI)
-  ASSISTED_LESSON: '/api/lesson/assisted',
-  SELF_LESSON: '/api/lesson/self',
-  CHAT: '/api/chat',
-  TRIVIA: '/api/trivia',
+  ASSISTED_LESSON: `${API_BASE_URL}/api/lesson/assisted`,
+  SELF_LESSON: `${API_BASE_URL}/api/lesson/self`,
+  CHAT: `${API_BASE_URL}/api/chat`,
+  TRIVIA: `${API_BASE_URL}/api/trivia`,
   
   // System
-  TEST_CONNECTION: '/api/test',
-  ABOUT: '/api/about',
+  TEST_CONNECTION: `${API_BASE_URL}/api/test`,
+  ABOUT: `${API_BASE_URL}/api/about`,
 };
 
 // Fix: Added WEBHOOK_URLS to resolve import errors in n8nService.ts

@@ -4,7 +4,9 @@ A friendly learning assistant web game for students, featuring lessons, quizzes,
 
 ## Project Overview
 
-This project features a React frontend that connects to a Python FastAPI backend. The backend handles authentication, user progress, and AI content generation (using Gemini).
+This project features a React frontend that connects to a **Production backend hosted on Render.com**. The backend handles authentication, user progress, and AI content generation (using Gemini).
+
+**Backend URL:** `https://learnsphere-backend-d6gb.onrender.com`
 
 ---
 
@@ -21,10 +23,10 @@ npm install
 ### Step 2: Create Local Environment File (`.env.local`)
 
 1.  In the root of the project, create a new file named `.env.local`.
-2.  Add the following line, replacing the placeholder with your local Python backend URL.
+2.  Add the following line, replacing the placeholder with your production backend URL (or your local one if testing locally).
 
     ```
-    VITE_BACKEND_URL=http://localhost:8000
+    VITE_API_BASE_URL=https://learnsphere-backend-d6gb.onrender.com
     ```
 
 ### Step 3: Run the Development Server
@@ -37,7 +39,33 @@ The application will be available at `http://localhost:5173`.
 
 ## 2. Backend Requirements (Python/FastAPI)
 
-To run this app, you need a running Python backend exposing the following REST endpoints. All endpoints expect `Content-Type: application/json`.
+To run this app, you need a running Python backend (previously on legacy hosting, now migrated to Render) exposing the REST endpoints listed below. 
+
+### CORS Configuration (Crucial)
+To allow the frontend to communicate with your backend, you **must** enable CORS (Cross-Origin Resource Sharing). In your FastAPI backend, include the following:
+
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+origins = [
+    "https://your-vercel-app-name.vercel.app", # Your deployed frontend URL
+    "http://localhost:5173",                 # Local development
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+### Endpoints
+All endpoints expect `Content-Type: application/json`.
 
 **Auth**
 *   `POST /api/auth/signup` - Body: `{ username, password }`
@@ -62,7 +90,7 @@ To run this app, you need a running Python backend exposing the following REST e
 
 1.  Push your code to a Git repository.
 2.  Deploy to Vercel.
-3.  Set the `VITE_BACKEND_URL` environment variable in Vercel to your deployed Python backend URL.
+3.  Set the `VITE_API_BASE_URL` environment variable in Vercel to your deployed Render backend URL: `https://learnsphere-backend-d6gb.onrender.com`.
 
 ---
 
