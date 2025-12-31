@@ -1,37 +1,8 @@
 // Fix: Imported the User type to correctly type the RANKS constant.
 import { User } from './types';
 
-/**
- * Robustly retrieves the API base URL.
- * Prioritizes standard environment variable locations and fallback URLs.
- */
-const getApiBaseUrl = (): string => {
-  const DEFAULT_URL = "https://learnsphere-backend-d6gb.onrender.com";
-  
-  try {
-    // 1. Check process.env (common for standard node/react apps)
-    if (typeof process !== 'undefined' && process.env?.VITE_API_BASE_URL) {
-      return process.env.VITE_API_BASE_URL;
-    }
-    
-    // 2. Check import.meta.env (Vite standard)
-    const meta = import.meta as any;
-    if (meta?.env?.VITE_API_BASE_URL) {
-      return meta.env.VITE_API_BASE_URL;
-    }
-    
-    // 3. Check for globally injected variables if any
-    if ((window as any)._VITE_API_BASE_URL) {
-      return (window as any)._VITE_API_BASE_URL;
-    }
-  } catch (e) {
-    console.warn("Error accessing environment variables:", e);
-  }
-  
-  return DEFAULT_URL;
-};
-
-const API_BASE_URL = getApiBaseUrl();
+// Use environment variable for the API base URL with a fallback
+const API_BASE_URL = (import.meta as any).env.VITE_API_BASE_URL || "https://learnsphere-backend-d6gb.onrender.com";
 
 // REST API Endpoints for Python Backend
 export const API_ENDPOINTS = {
@@ -54,7 +25,7 @@ export const API_ENDPOINTS = {
   ABOUT: `${API_BASE_URL}/api/about`,
 };
 
-// n8n Legacy Webhook URLs (Fallback mapping)
+// Fix: Added WEBHOOK_URLS to resolve import errors in n8nService.ts
 export const WEBHOOK_URLS = {
   SIGN_UP: '/webhook/signup',
   SIGN_IN: '/webhook/signin',

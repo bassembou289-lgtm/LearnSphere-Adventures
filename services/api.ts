@@ -1,10 +1,19 @@
+// Fix: Removed missing type reference and cast import.meta to any for env access.
+const backendUrl = (import.meta as any).env.VITE_BACKEND_URL;
+
+if (!backendUrl) {
+  console.warn("VITE_BACKEND_URL is not set. Please check your .env.local file or deployment environment variables.");
+}
+
 /**
  * Generic helper for making HTTP requests to the Python backend.
- * Now uses endpoints that are fully qualified with the base URL.
  */
 export const apiRequest = async <T>(endpoint: string, body: object): Promise<T> => {
-    // The endpoint passed here is expected to be a full URL from API_ENDPOINTS in constants.ts
-    const url = endpoint;
+    if (!backendUrl) {
+        throw new Error("Backend URL is not configured. Please set VITE_BACKEND_URL.");
+    }
+
+    const url = `${backendUrl}${endpoint}`;
     
     try {
         const response = await fetch(url, {
@@ -14,7 +23,6 @@ export const apiRequest = async <T>(endpoint: string, body: object): Promise<T> 
                 'Accept': 'application/json'
             },
             body: JSON.stringify(body),
-            credentials: 'include', // Ensure cross-origin session support
         });
 
         if (!response.ok) {
@@ -25,22 +33,14 @@ export const apiRequest = async <T>(endpoint: string, body: object): Promise<T> 
                 else if (errorBody.message) errorMessage = errorBody.message;
             } catch (e) {
                 // Fallback if response is not JSON
-                try {
-                    const textBody = await response.text();
-                    if (textBody) errorMessage = textBody;
-                } catch (textErr) {
-                    console.error("Could not parse error response body");
-                }
+                const textBody = await response.text();
+                if (textBody) errorMessage = textBody;
             }
             throw new Error(errorMessage);
         }
 
         return await response.json() as T;
     } catch (error) {
-        if (error instanceof TypeError && error.message === 'Failed to fetch') {
-            console.error(`Network or CORS Error at ${url}. Please ensure the backend has CORS enabled for this origin.`);
-            throw new Error("Unable to connect to the learning server. This might be a CORS issue or the server is waking up.");
-        }
         console.error(`API Error at ${url}:`, error);
         throw error;
     }

@@ -9,14 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-markdown": "10",
-    "vfile": "6",
-    "unified": "11",
-    "vite": "^7.3.0",
-    "@tailwindcss/vite": "^4.1.18",
-    "@vitejs/plugin-react": "^5.1.2"
+    "react": "^19.2.0",
+    "react-markdown": "^10.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

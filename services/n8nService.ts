@@ -1,40 +1,26 @@
 import { WEBHOOK_URLS } from '../constants';
 import { N8NAuthResponse, N8NUpdateXPResponse, N8NDashboardResponse, N8NBonusResponse, User, N8NUpdateSettingsResponse } from '../types';
 
-// Safely access environment variables with a fallback
-const getBackendUrl = () => {
-  try {
-    if (typeof process !== 'undefined' && process.env && process.env.VITE_API_BASE_URL) {
-      return process.env.VITE_API_BASE_URL;
-    }
-    const meta = import.meta as any;
-    if (meta && meta.env && meta.env.VITE_API_BASE_URL) {
-      return meta.env.VITE_API_BASE_URL;
-    }
-  } catch (e) {}
-  return "https://learnsphere-backend-d6gb.onrender.com";
-};
+// Fix: Cast import.meta to any to avoid "Property 'env' does not exist on type 'ImportMeta'" when vite types are missing.
+const backendUrl = (import.meta as any).env.VITE_BACKEND_URL;
 
-const backendUrl = getBackendUrl();
+if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
+  console.warn("VITE_BACKEND_URL is not set or is using the placeholder value for n8n services. Please check your .env.local file or deployment environment variables.");
+}
 
-/**
- * Generic POST helper for n8n webhooks or legacy endpoints.
- */
+// NOTE: These functions will fail if you don't have a running n8n instance with these webhooks.
+// The app uses mock data in App.tsx for demonstration purposes.
+// To use with a real backend, replace mock logic with these service calls.
+
 const post = async <T,>(endpoint: string, body: object): Promise<T> => {
-    if (!backendUrl) {
-        const meta = import.meta as any;
-        const isProduction = meta && meta.env ? meta.env.PROD : true;
+    if (!backendUrl || backendUrl.includes('YOUR_N8N_ENDPOINT_URL_HERE')) {
+        const isProduction = (import.meta as any).env.PROD; // Use Vite's standard flag for production via cast
         const errorMessage = isProduction
-            ? "API service is not configured. Please set the VITE_API_BASE_URL environment variable."
-            : "API service is not configured. Please set VITE_API_BASE_URL in your .env.local file.";
+            ? "Authentication service is not configured. Please set the VITE_BACKEND_URL environment variable in your deployment settings."
+            : "Authentication service is not configured. Please set VITE_BACKEND_URL in your .env.local file.";
         return Promise.reject(new Error(errorMessage));
     }
-    
-    // Ensure we don't double up slashes
-    const baseUrl = backendUrl.endsWith('/') ? backendUrl.slice(0, -1) : backendUrl;
-    const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-    const url = `${baseUrl}${path}`;
-
+    const url = `${backendUrl}${endpoint}`;
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -42,16 +28,16 @@ const post = async <T,>(endpoint: string, body: object): Promise<T> => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(body),
-            credentials: 'include',
         });
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Call to ${endpoint} failed with status ${response.status}: ${errorText}`);
+            throw new Error(`Webhook call to ${endpoint} failed with status ${response.status}: ${errorText}`);
         }
         return await response.json() as T;
     } catch (error) {
-        console.error(`Error calling endpoint at ${url}:`, error);
+        console.error(`Error calling webhook at ${url}:`, error);
+        // In a real app, you'd want more robust error handling, but for this demo, we re-throw.
         throw error;
     }
 };

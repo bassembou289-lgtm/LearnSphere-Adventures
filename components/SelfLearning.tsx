@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { generateSelfLearningLesson, continueChat } from '../services/aiService';
+import { generateSelfLearningLesson, continueChat } from '../services/geminiService';
 import LoadingSpinner from './LoadingSpinner';
 import { useTranslation } from '../i18n/LanguageContext';
 import { TOPICS } from '../constants';
@@ -33,6 +33,7 @@ const SelfLearning: React.FC<SelfLearningProps> = ({ topic, user, onBack }) => {
         let lessonContent = await generateSelfLearningLesson(topic, language, user.rank, user.level);
         
         // CLEANING LOGIC: Remove wrapping markdown code fences if present
+        // This prevents the "black screen" issue where the whole lesson renders as a code block
         if (lessonContent.trim().startsWith('```')) {
           lessonContent = lessonContent
             .replace(/^```(?:markdown)?\s*/i, '') // Remove start fence
@@ -78,6 +79,7 @@ const SelfLearning: React.FC<SelfLearningProps> = ({ topic, user, onBack }) => {
     }
   };
 
+  // Custom components for ReactMarkdown to add beautiful styling
   const MarkdownComponents: Components = {
     h1: ({node, ...props}) => (
       <h1 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600 mt-8 mb-6 pb-2 border-b-2 border-purple-100" {...props} />
@@ -171,6 +173,7 @@ const SelfLearning: React.FC<SelfLearningProps> = ({ topic, user, onBack }) => {
         </div>
         
         <div className="bg-white/90 backdrop-blur-xl p-6 sm:p-10 rounded-[2rem] shadow-2xl border border-white/50 mb-10 relative overflow-hidden">
+            {/* Decorative background element */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 translate-y-1/2 -translate-x-1/2"></div>
 

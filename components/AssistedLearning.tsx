@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { generateAssistedLesson } from '../services/aiService';
+import { generateAssistedLesson } from '../services/geminiService';
 import { updateUserXP } from '../services/userService';
 import { AssistedLearningData, User, N8NUpdateXPResponse } from '../types';
 import LoadingSpinner from './LoadingSpinner';
