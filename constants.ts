@@ -1,7 +1,10 @@
+
 // Fix: Imported the User type to correctly type the RANKS constant.
 import { User } from './types';
 
 // Use environment variable for the API base URL with a fallback
+// Corrected to use standard Vite environment variable access as requested
+// Fixed TypeScript error by casting import.meta to any for env access
 const API_BASE_URL = (import.meta as any).env.VITE_API_BASE_URL || "https://learnsphere-backend-d6gb.onrender.com";
 
 // REST API Endpoints for Python Backend

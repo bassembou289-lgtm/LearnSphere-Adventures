@@ -28,6 +28,7 @@ const post = async <T,>(endpoint: string, body: object): Promise<T> => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(body),
+            credentials: 'include',
         });
 
         if (!response.ok) {

@@ -12,7 +12,8 @@ fetch(`${BACKEND_URL}/api/test`, {
   headers: {
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify({ prompt: 'ping' })
+  body: JSON.stringify({ prompt: 'ping' }),
+  credentials: 'include'
 })
   .then(res => {
     if (!res.ok) {

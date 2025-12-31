@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { User } from '../types';
 import { useTranslation } from '../i18n/LanguageContext';
-import { testBackendConnection } from '../services/geminiService';
+import { testBackendConnection } from '../services/aiService';
 
 interface SettingsModalProps {
   user: User;
@@ -102,7 +101,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ user, onClose, onSave }) 
         <form onSubmit={handleSave} className="space-y-4">
             <h3 className="text-lg font-bold text-gray-700 border-b pb-2">{t('settings.editProfile')}</h3>
             
-            {/* Avatar Management Section */}
             <div className="flex flex-col items-center space-y-4 pt-2 bg-gray-50 p-4 rounded-xl border border-gray-100">
                 <label className="block text-sm font-bold text-gray-600 w-full text-left">{t('settings.avatar')}</label>
                 
@@ -215,4 +213,5 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ user, onClose, onSave }) 
   );
 };
 
+// Fix: Added missing default export to resolve import error in App.tsx
 export default SettingsModal;

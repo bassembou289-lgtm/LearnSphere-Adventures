@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+body {
+  font-family: 'Baloo Bhaijaan 2', sans-serif;
+  background: linear-gradient(to top right, #f97316, #fb923c, #fdba74);
+  background-attachment: fixed;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes pulse-once {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.animate-pulse-once {
+  animation: pulse-once 0.3s ease-in-out;
+}
+
+@keyframes correct-answer-reveal {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.05) rotate(-2deg); }
+  75% { transform: scale(1.05) rotate(2deg); }
+}
+
+.animate-correct-reveal {
+  animation: correct-answer-reveal 0.5s ease-in-out 0.2s forwards;
+}
+
+@keyframes incorrect-answer-reveal {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+.animate-incorrect-reveal {
+    animation: incorrect-answer-reveal 0.4s ease-in-out 0.2s forwards;
+}
+
+/* Plane Travel Animation for Dashboard Banner - Linear at bottom */
+@keyframes plane-travel {
+  0% {
+    left: -10%;
+    top: 80%; /* Aligned with the dots at cy=80 */
+    transform: translateY(-50%) rotate(90deg);
+  }
+  100% {
+    left: 110%;
+    top: 80%;
+    transform: translateY(-50%) rotate(90deg);
+  }
+}
+
+.animate-plane-travel {
+  animation: plane-travel 8s linear infinite;
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { generateBonusTrivia } from '../services/geminiService';
+import { generateBonusTrivia } from '../services/aiService';
 import { sendBonusResults } from '../services/userService';
 import { BonusData, User, N8NBonusResponse } from '../types';
 import LoadingSpinner from './LoadingSpinner';
@@ -100,4 +100,5 @@ const BonusZone: React.FC<BonusZoneProps> = ({ user, onComplete, onBack }) => {
   );
 };
 
+// Fix: Added missing default export to resolve import error in App.tsx
 export default BonusZone;

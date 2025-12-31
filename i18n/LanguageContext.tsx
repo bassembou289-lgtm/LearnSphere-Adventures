@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import enTranslations from './translations/en.json';
-import arTranslations from './translations/ar.json';
+import enTranslations from './translations/en';
+import arTranslations from './translations/ar';
 
 type Language = 'en' | 'ar';
 type Translations = Record<string, string>;
@@ -13,8 +13,8 @@ interface LanguageContextType {
 }
 
 const translationsData: Record<Language, Translations> = {
-    en: enTranslations,
-    ar: arTranslations
+    en: enTranslations as Translations,
+    ar: arTranslations as Translations
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
