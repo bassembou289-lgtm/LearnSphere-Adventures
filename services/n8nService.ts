@@ -1,15 +1,29 @@
 import { WEBHOOK_URLS } from '../constants';
 import { N8NAuthResponse, N8NUpdateXPResponse, N8NDashboardResponse, N8NBonusResponse, User, N8NUpdateSettingsResponse } from '../types';
 
-// Use consistent environment variable naming
-const backendUrl = (import.meta as any).env.VITE_API_BASE_URL || "https://learnsphere-backend-d6gb.onrender.com";
+// Safely access environment variables with a fallback
+const getBackendUrl = () => {
+  try {
+    if (typeof process !== 'undefined' && process.env && process.env.VITE_API_BASE_URL) {
+      return process.env.VITE_API_BASE_URL;
+    }
+    const meta = import.meta as any;
+    if (meta && meta.env && meta.env.VITE_API_BASE_URL) {
+      return meta.env.VITE_API_BASE_URL;
+    }
+  } catch (e) {}
+  return "https://learnsphere-backend-d6gb.onrender.com";
+};
+
+const backendUrl = getBackendUrl();
 
 /**
  * Generic POST helper for n8n webhooks or legacy endpoints.
  */
 const post = async <T,>(endpoint: string, body: object): Promise<T> => {
     if (!backendUrl) {
-        const isProduction = (import.meta as any).env.PROD;
+        const meta = import.meta as any;
+        const isProduction = meta && meta.env ? meta.env.PROD : true;
         const errorMessage = isProduction
             ? "API service is not configured. Please set the VITE_API_BASE_URL environment variable."
             : "API service is not configured. Please set VITE_API_BASE_URL in your .env.local file.";
