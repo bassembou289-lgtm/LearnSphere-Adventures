@@ -1,15 +1,15 @@
-@import "tailwindcss";
-
 body {
   font-family: 'Baloo Bhaijaan 2', sans-serif;
   background: linear-gradient(to top right, #f97316, #fb923c, #fdba74);
   background-attachment: fixed;
+  margin: 0;
+  padding: 0;
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -18,12 +18,12 @@ body {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.5s ease-out forwards;
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes pulse-once {
   0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  50% { transform: scale(1.02); }
   100% { transform: scale(1); }
 }
 
@@ -53,20 +53,34 @@ body {
     animation: incorrect-answer-reveal 0.4s ease-in-out 0.2s forwards;
 }
 
-/* Plane Travel Animation for Dashboard Banner - Linear at bottom */
 @keyframes plane-travel {
   0% {
-    left: -10%;
-    top: 80%; /* Aligned with the dots at cy=80 */
+    left: -15%;
+    top: 80%;
     transform: translateY(-50%) rotate(90deg);
   }
   100% {
-    left: 110%;
+    left: 115%;
     top: 80%;
     transform: translateY(-50%) rotate(90deg);
   }
 }
 
 .animate-plane-travel {
-  animation: plane-travel 8s linear infinite;
+  animation: plane-travel 10s linear infinite;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.05);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.3);
 }

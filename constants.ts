@@ -1,23 +1,34 @@
 // Fix: Imported the User type to correctly type the RANKS constant.
 import { User } from './types';
 
-// Safely access environment variables with a fallback
-// The previous access (import.meta as any).env.VITE_API_BASE_URL was throwing an error because .env was undefined.
-const getApiBaseUrl = () => {
+/**
+ * Robustly retrieves the API base URL.
+ * Prioritizes standard environment variable locations and fallback URLs.
+ */
+const getApiBaseUrl = (): string => {
+  const DEFAULT_URL = "https://learnsphere-backend-d6gb.onrender.com";
+  
   try {
-    // Try process.env first as it's the standard for this environment's API_KEY
-    if (typeof process !== 'undefined' && process.env && process.env.VITE_API_BASE_URL) {
+    // 1. Check process.env (common for standard node/react apps)
+    if (typeof process !== 'undefined' && process.env?.VITE_API_BASE_URL) {
       return process.env.VITE_API_BASE_URL;
     }
-    // Fallback to import.meta.env for standard Vite compatibility
+    
+    // 2. Check import.meta.env (Vite standard)
     const meta = import.meta as any;
-    if (meta && meta.env && meta.env.VITE_API_BASE_URL) {
+    if (meta?.env?.VITE_API_BASE_URL) {
       return meta.env.VITE_API_BASE_URL;
     }
+    
+    // 3. Check for globally injected variables if any
+    if ((window as any)._VITE_API_BASE_URL) {
+      return (window as any)._VITE_API_BASE_URL;
+    }
   } catch (e) {
-    // Ignore errors and use fallback
+    console.warn("Error accessing environment variables:", e);
   }
-  return "https://learnsphere-backend-d6gb.onrender.com";
+  
+  return DEFAULT_URL;
 };
 
 const API_BASE_URL = getApiBaseUrl();
@@ -43,7 +54,7 @@ export const API_ENDPOINTS = {
   ABOUT: `${API_BASE_URL}/api/about`,
 };
 
-// Fix: Added WEBHOOK_URLS to resolve import errors in n8nService.ts
+// n8n Legacy Webhook URLs (Fallback mapping)
 export const WEBHOOK_URLS = {
   SIGN_UP: '/webhook/signup',
   SIGN_IN: '/webhook/signin',
