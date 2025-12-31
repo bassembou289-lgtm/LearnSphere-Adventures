@@ -1,8 +1,7 @@
 // Fix: Imported the User type to correctly type the RANKS constant.
 import { User } from './types';
 
-// Use environment variable for the API base URL with a fallback
-const API_BASE_URL = (import.meta as any).env.VITE_API_BASE_URL || "https://learnsphere-backend-d6gb.onrender.com";
+const API_BASE_URL = "https://learnsphere-backend-d6gb.onrender.com";
 
 // REST API Endpoints for Python Backend
 export const API_ENDPOINTS = {

@@ -1,8 +1,8 @@
-// Consistent with constants.ts environment variable naming
-const backendUrl = (import.meta as any).env.VITE_API_BASE_URL || "https://learnsphere-backend-d6gb.onrender.com";
+// Fix: Removed missing type reference and cast import.meta to any for env access.
+const backendUrl = (import.meta as any).env.VITE_BACKEND_URL;
 
 if (!backendUrl) {
-  console.warn("API Base URL is not set. Please check your .env.local file or deployment environment variables.");
+  console.warn("VITE_BACKEND_URL is not set. Please check your .env.local file or deployment environment variables.");
 }
 
 /**
@@ -10,10 +10,10 @@ if (!backendUrl) {
  */
 export const apiRequest = async <T>(endpoint: string, body: object): Promise<T> => {
     if (!backendUrl) {
-        throw new Error("Backend URL is not configured. Please set VITE_API_BASE_URL.");
+        throw new Error("Backend URL is not configured. Please set VITE_BACKEND_URL.");
     }
 
-    const url = endpoint.startsWith('http') ? endpoint : `${backendUrl}${endpoint}`;
+    const url = `${backendUrl}${endpoint}`;
     
     try {
         const response = await fetch(url, {
@@ -33,22 +33,14 @@ export const apiRequest = async <T>(endpoint: string, body: object): Promise<T> 
                 else if (errorBody.message) errorMessage = errorBody.message;
             } catch (e) {
                 // Fallback if response is not JSON
-                try {
-                    const textBody = await response.text();
-                    if (textBody) errorMessage = textBody;
-                } catch (textErr) {
-                    console.error("Could not parse error response body");
-                }
+                const textBody = await response.text();
+                if (textBody) errorMessage = textBody;
             }
             throw new Error(errorMessage);
         }
 
         return await response.json() as T;
     } catch (error) {
-        if (error instanceof TypeError && error.message === 'Failed to fetch') {
-            console.error(`Network or CORS Error at ${url}. Please ensure the backend at ${backendUrl} has CORS enabled for this origin.`);
-            throw new Error("Unable to connect to the learning server. This might be a CORS issue or the server is waking up.");
-        }
         console.error(`API Error at ${url}:`, error);
         throw error;
     }
