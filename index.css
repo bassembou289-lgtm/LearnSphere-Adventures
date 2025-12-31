@@ -2,12 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Baloo Bhaijaan 2', sans-serif;
-  background: linear-gradient(to top right, #f97316, #fb923c, #fdba74);
-  background-attachment: fixed;
-  margin: 0;
-  padding: 0;
+@layer base {
+  body {
+    @apply font-sans;
+    background: linear-gradient(to top right, #f97316, #fb923c, #fdba74);
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 @keyframes fadeInUp {

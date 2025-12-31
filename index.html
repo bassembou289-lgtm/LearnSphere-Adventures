@@ -8,6 +8,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind Play CDN for immediate styling fix -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Baloo Bhaijaan 2"', 'sans-serif'],
+            },
+          },
+        },
+      }
+    </script>
     <script type="importmap">
 {
   "imports": {
@@ -15,7 +28,9 @@
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0/",
     "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0",
-    "vite": "https://esm.sh/vite@^7.3.0"
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^4.3.4",
+    "@tailwindcss/vite": "https://esm.sh/@tailwindcss/vite@^4.0.0"
   }
 }
 </script>
