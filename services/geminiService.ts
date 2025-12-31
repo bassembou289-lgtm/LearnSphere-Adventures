@@ -1,12 +1,6 @@
-
-// Fix: Implemented the Google GenAI SDK directly in geminiService.ts.
-import { GoogleGenAI, Type } from "@google/genai";
 import { AssistedLearningData, BonusData, ChatMessage, User } from '../types';
 import { API_ENDPOINTS } from '../constants';
 import { apiRequest } from './api';
-
-// Initialize the Google GenAI client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const generateAssistedLesson = async (
     topic: string, 
@@ -14,36 +8,12 @@ export const generateAssistedLesson = async (
     rank: User['rank'],
     level: number
 ): Promise<AssistedLearningData> => {
-    const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: `Generate a lesson and a 5-question multiple-choice quiz about "${topic}" for a student at the "${rank}" rank and level ${level} in ${language === 'en' ? 'English' : 'Arabic'}.`,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: {
-                type: Type.OBJECT,
-                properties: {
-                    lesson: { type: Type.STRING },
-                    quiz: {
-                        type: Type.ARRAY,
-                        items: {
-                            type: Type.OBJECT,
-                            properties: {
-                                q: { type: Type.STRING },
-                                options: { type: Type.ARRAY, items: { type: Type.STRING } },
-                                answer: { type: Type.STRING }
-                            },
-                            required: ["q", "options", "answer"]
-                        }
-                    }
-                },
-                required: ["lesson", "quiz"]
-            }
-        }
+    return apiRequest<AssistedLearningData>(API_ENDPOINTS.ASSISTED_LESSON, {
+        topic,
+        language,
+        rank,
+        level
     });
-
-    const text = response.text;
-    if (!text) throw new Error("No response from AI.");
-    return JSON.parse(text.trim()) as AssistedLearningData;
 };
 
 export const generateSelfLearningLesson = async (
@@ -52,11 +22,13 @@ export const generateSelfLearningLesson = async (
     rank: User['rank'],
     level: number
 ): Promise<string> => {
-    const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview',
-        contents: `Generate a deep-dive educational lesson about "${topic}" for a student at the "${rank}" rank and level ${level} in ${language === 'en' ? 'English' : 'Arabic'}. Use rich Markdown.`,
+    const response = await apiRequest<{ lesson: string }>(API_ENDPOINTS.SELF_LESSON, {
+        topic,
+        language,
+        rank,
+        level
     });
-    return response.text || "";
+    return response.lesson;
 };
 
 export const continueChat = async (
@@ -64,48 +36,18 @@ export const continueChat = async (
   messages: ChatMessage[],
   language: 'en' | 'ar'
 ): Promise<string> => {
-    const chat = ai.chats.create({
-        model: 'gemini-3-flash-preview',
-        config: {
-            systemInstruction: `You are a friendly AI tutor. Lesson context: ${lessonContent}. Language: ${language === 'en' ? 'English' : 'Arabic'}.`,
-        }
+    const response = await apiRequest<{ reply: string }>(API_ENDPOINTS.CHAT, {
+        lessonContent,
+        messages,
+        language
     });
-
-    const lastUserMsg = messages.filter(m => m.author === 'user').pop()?.content || "Explain more.";
-    const response = await chat.sendMessage({ message: lastUserMsg });
-    return response.text || "";
+    return response.reply;
 };
 
 export const generateBonusTrivia = async (language: 'en' | 'ar'): Promise<BonusData> => {
-    const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: `Generate 10 trivia questions in ${language === 'en' ? 'English' : 'Arabic'}.`,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: {
-                type: Type.OBJECT,
-                properties: {
-                    quiz: {
-                        type: Type.ARRAY,
-                        items: {
-                            type: Type.OBJECT,
-                            properties: {
-                                q: { type: Type.STRING },
-                                options: { type: Type.ARRAY, items: { type: Type.STRING } },
-                                answer: { type: Type.STRING }
-                            },
-                            required: ["q", "options", "answer"]
-                        }
-                    }
-                },
-                required: ["quiz"]
-            }
-        }
+    return apiRequest<BonusData>(API_ENDPOINTS.TRIVIA, {
+        language
     });
-
-    const text = response.text;
-    if (!text) throw new Error("No response from AI.");
-    return JSON.parse(text.trim()) as BonusData;
 };
 
 export const testBackendConnection = (): Promise<{ message: string }> => {
