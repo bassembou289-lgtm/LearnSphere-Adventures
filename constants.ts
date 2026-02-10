@@ -24,15 +24,7 @@ export const API_ENDPOINTS = {
   ABOUT: "/api/about",
 };
 
-// Fix: Added WEBHOOK_URLS to resolve import errors in n8nService.ts
-export const WEBHOOK_URLS = {
-  SIGN_UP: '/webhook/signup',
-  SIGN_IN: '/webhook/signin',
-  UPDATE_SETTINGS: '/webhook/settings',
-  UPDATE_XP: '/webhook/xp',
-  DASHBOARD: '/webhook/dashboard',
-  GET_BONUS: '/webhook/bonus',
-};
+
 
 export const TOPICS = [
   { id: 'Math', labelKey: 'topic.math', emoji: '🧮' },
