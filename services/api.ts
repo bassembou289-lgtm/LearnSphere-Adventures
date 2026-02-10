@@ -14,7 +14,7 @@ export const apiRequest = async <T>(endpoint: string, body: object): Promise<T> 
     }
 
     const url = `${backendUrl}${endpoint}`;
-    
+    console.log("FINAL FETCH URL:", url);
     try {
         const response = await fetch(url, {
             method: 'POST',
